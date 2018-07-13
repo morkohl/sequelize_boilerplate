@@ -3,15 +3,20 @@ const APIError = require('../utils/APIError');
 
 const handler = function (err, req, res, next) {
     const errorResponse = {
+        success: false,
         status: err.status,
-        message: err.message || httpStatus[err.status],
-        errors: err.errors,
-        stack: err.stack
+        error: {
+            message: err.message || httpStatus[err.status],
+            errors: err.errors,
+            stack: err.stack
+        }
     };
 
     if (process.env.NODE_ENV !== 'development') {
-        delete errorResponse.stack;
+        delete errorResponse.errorstack;
     }
+
+    errorResponse.timestamp = new Date().toUTCString();
 
     res.status(err.status).send(errorResponse);
 
@@ -20,8 +25,6 @@ const handler = function (err, req, res, next) {
         process.exit(1);
     }
 };
-
-exports.handler = handler;
 
 exports.converter = function (err, req, res, next) {
     let convertedError = err;
@@ -46,3 +49,5 @@ exports.notFound = function (req, res, next) {
 
   handler(err, req, res);
 };
+
+exports.handler = handler;

@@ -1,13 +1,18 @@
 const db = require('../models/');
 const httpStatus = require('http-status');
+const resWithSuccess = require('../utils/utils').resWithSuccess;
 
 exports.createTask = async function (req, res, next) {
-    res.send(httpStatus.NOT_IMPLEMENTED);
+    try {
+        const task = await db.Task.create(req.body.task);
+        return resWithSuccess(res, task, httpStatus.CREATED);
+    } catch (err) {
+        next(err);
+    }
 };
 
 exports.getTask = async function (req, res, next) {
     try {
-        //why dont we just query the fuckin data? lmao
         const task = await db.Task.findOne(
             {
                 where: {
@@ -15,10 +20,7 @@ exports.getTask = async function (req, res, next) {
                     userId: req.params.userId
                 }
             });
-        if (task) {
-            return res.status(httpStatus.OK).send(task);
-        }
-        res.status(httpStatus.NOT_FOUND);
+        resWithSuccess(res, task)
     } catch (err) {
         next(err);
     }
@@ -26,23 +28,19 @@ exports.getTask = async function (req, res, next) {
 
 exports.getAllTasks = async function (req, res, next) {
     try {
-        const tasks = db.Task.findAll(
+        const tasks = await db.Task.findAll(
             {
                 where: {
                     userId: req.params.userId
                 }
             }
         );
-        res.status(200).send(tasks);
+        resWithSuccess(res, tasks);
     } catch (err) {
         next(err);
     }
 };
 
 exports.changeTask = async function (req, res, next) {
-    res.send(httpStatus.NOT_IMPLEMENTED);
-};
-
-exports.createTask = async function (req, res, next) {
     res.send(httpStatus.NOT_IMPLEMENTED);
 };

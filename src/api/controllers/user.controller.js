@@ -1,23 +1,26 @@
 const db = require('../models/');
 const httpStatus = require('http-status');
+const resWithSuccess = require('../utils/utils').resWithSuccess;
+const APIError = require('../utils/APIError');
 
 exports.register = async function (req, res, next) {
     try {
-        const resultArray = db.User.findOrCreate({
+        const result = db.User.findOrCreate({
             where: {
                 username: req.body.user.username,
                 email: req.body.user.email
             }
         });
-        const user = resultArray[0];
-        const created = resultArray[1];
+        const user = result[0];
+        const created = result[1];
         if (created) {
-            res.status(httpStatus.CREATED).send(user);
-        } else {
-            res.sendStatus(httpStatus.CONFLICT);
+            return resWithSuccess(res, user, httpStatus.CREATED);
         }
-    } catch (error) {
-        next(error);
+        next(new APIError({
+            message: "User already registered"
+        }));
+    } catch (err) {
+        next(err);
     }
 };
 
@@ -36,9 +39,12 @@ exports.login = async function (req, res, next) {
                 return res.sendStatus(httpStatus.OK);
             }
         }
-        res.sendStatus(httpStatus.UNAUTHORIZED);
-    } catch (error) {
-        next(error);
+        next(new APIError({
+            message: !validPassword ? "Invalid login" : "User doesn't exist",
+            status: httpStatus.UNAUTHORIZED
+        }))
+    } catch (err) {
+        next(err);
     }
 };
 
