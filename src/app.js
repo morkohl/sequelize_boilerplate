@@ -5,7 +5,7 @@ const errorHandler = require('./api/middleware/error.middleware');
 
 const routes = require('./api/routes/v1/index.route');
 
-const models = require('./api/models/modelSetup');
+const models = require('./api/models/db');
 
 const app = express();
 

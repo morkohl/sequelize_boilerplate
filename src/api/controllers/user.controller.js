@@ -1,4 +1,4 @@
-const db = require('../models/modelSetup');
+const db = require('../models/');
 const httpStatus = require('http-status');
 
 exports.register = async function (req, res, next) {
@@ -42,41 +42,19 @@ exports.login = async function (req, res, next) {
     }
 };
 
-exports.createTask = async function (req, res, next) {
-
-};
-
-exports.getTask = async function (req, res, next) {
-    try {
-        //why dont we just query the fuckin data? lmao
-        const task = await db.Task.findOne(
-            {
-                where: {}
-            })
-    }
+exports.getUser = function (req, res, next) {
+    res.send(httpStatus.NOT_IMPLEMENTED);
 };
 
 exports.getUser = function (req, res, next) {
-
-};
-
-exports.getUser = function (req, res, next) {
-    console.log(req.params.user_id);
-    db.User.findById(req.params.user_id).then(res.send).catch(next);
+    db.User.findById(req.params.userId).then(res.send).catch(next);
 };
 
 exports.getAll = function (req, res, next) {
     db.User.all().then(res.send).catch(next);
 };
 
-exports.getAllTasks = function (req, res, next) {
-    db.Tasks.findAll({where: {userId: req.params.user_id}}).then(res.send).catch(next);
-};
-
 exports.changeUser = function (req, res, next) {
-
+    res.send(httpStatus.NOT_IMPLEMENTED);
 };
 
-exports.changeTask = function (req, res, next) {
-
-};

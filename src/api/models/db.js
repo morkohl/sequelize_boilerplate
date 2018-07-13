@@ -12,6 +12,7 @@ const sequelize = new ModelSetup(
     config.database.options
 );
 
+//this function is used so we can get "db.User" instead of "db.user" as sequelize maps by he table name
 function modelNameToUppercase(model) {
     return model.name.charAt(0).toUpperCase() + model.name.slice(1)
 }
