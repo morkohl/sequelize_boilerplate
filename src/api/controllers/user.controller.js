@@ -30,7 +30,6 @@ exports.login = async function (req, res, next) {
             {
                 where: {
                     username: req.body.user.username
-
                 }
             });
         if (user) {

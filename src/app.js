@@ -1,4 +1,8 @@
 const express = require('express');
+<<<<<<< HEAD
+=======
+const path = require('path');
+>>>>>>> e10cccc389e0a8145b18b91d79c3c687ed8b2f44
 const logger = require('morgan');
 const errorHandler = require('./api/middleware/error.middleware');
 
