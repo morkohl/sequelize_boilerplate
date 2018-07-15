@@ -1,48 +1,31 @@
+const STATUSES = {
+    active: 'active',
+    completed: 'completed'
+};
+
 module.exports = function (sequelize, DataTypes) {
     const Task = sequelize.define('task', {
         taskName: {
             type: DataTypes.STRING,
-            validate: {
-                notNull: {
-                    args: true,
-                    msg: "Please specify a task name",
-                },
-                notEmpty: {
-                    args: true,
-                    msg: "Please specify a task name"
-                }
-            }
         },
         maximumTaskPoints: {
             type: DataTypes.INTEGER,
-            validate: {
-                notNull: {
-                    args: true,
-                    msg: "Please specify maximum tasks points"
-                },
-                notEmpty: {
-                    args: true,
-                    msg: "Please specify maximum tasks points"
-                }
-            }
         },
         currentTaskPoints: {
             type: DataTypes.INTEGER,
             validate: {
-                notNull: {
-                    args: true,
-                    msg: "Please specify maximum tasks points"
+                isBelowMax: function (value, next) {
+                    if (value > this.maximumTaskPoints) {
+                        return next('Current task points need to be less than current task points.')
+                    }
+                    next();
                 },
-                notEmpty: {
-                    args: true,
-                    msg: "Please specify maximum tasks points"
-                }
             }
         },
         taskStatus: {
             type: DataTypes.ENUM,
-            values: ['active', 'completed'],
-            defaultValue: 'active'
+            values: Object.keys(STATUSES).map(key => STATUSES[key]),
+            defaultValue: STATUSES.active
         }
     });
 
@@ -59,6 +42,13 @@ module.exports = function (sequelize, DataTypes) {
     Task.prototype.getCompletionPercentage = function() {
         return this.currentTaskPoints / this.maximumTaskPoints;
     };
+
+    const getStatus = function(task) {
+        return task.currentTaskPoints < task.maximumTaskPoints ? STATUSES.active : STATUSES.completed;
+    };
+
+    Task.hook('beforeCreate', getStatus);
+    Task.hook('beforeUpdate', getStatus);
 
     return Task;
 };

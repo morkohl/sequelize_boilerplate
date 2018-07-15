@@ -44,6 +44,7 @@ exports.getAllTasks = async function (req, res, next) {
 exports.changeTask = async function (req, res, next) {
     try {
         const updatedRows = await db.Task.update(
+            req.body.task,
             {
                 where: {
                     userId: req.params.userId,

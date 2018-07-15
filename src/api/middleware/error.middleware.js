@@ -1,3 +1,4 @@
+const Sequelize = require('sequelize');
 const httpStatus = require('http-status');
 const APIError = require('../utils/APIError');
 
@@ -36,6 +37,12 @@ exports.converter = function (err, req, res, next) {
             errors: err.errors,
             stack: err.stack
         });
+    }
+
+    //this is good but we also have to include some way of identifiying validation errors from joi!
+    //one way to do it would be searching through all the keys of any schema and identifiying the key back in the stack
+    if(err instanceof Sequelize.ValidationError) {
+        convertedError.status = httpStatus.UNPROCESSABLE_ENTITY;
     }
 
     handler(convertedError, req, res)

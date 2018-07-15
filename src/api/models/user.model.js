@@ -9,50 +9,12 @@ module.exports = function (sequelize, DataTypes) {
             },
             username: {
                 type: DataTypes.STRING,
-                validate: {
-                    is: {
-                        args: ["^[a-z1-9]+$", 'i'],
-                        msg: "Special characters are not allowed."
-                    },
-                    notNull: {
-                        args: true,
-                        msg: "Please provide a username."
-                    },
-                    notEmpty: {
-                        args: true,
-                        msg: "Please provide a username."
-                    }
-                }
             },
             email: {
                 type: DataTypes.STRING,
-                validate: {
-                    isEmail: {
-                        args: true,
-                        msg: "Must be an e-mail."
-                    },
-                    notNull: {
-                        args: true,
-                        msg: "Please provide an e-mail."
-                    },
-                    notEmpty: {
-                        args: true,
-                        msg: "Please provide an e-mail."
-                    }
-                }
             },
             password: {
                 type: DataTypes.STRING,
-                validate: {
-                    notNull: {
-                        args: true,
-                        msg: "Please provide a password."
-                    },
-                    notEmpty: {
-                        args: true,
-                        msg: "Please provide a password."
-                    }
-                }
             }
         },
         {
