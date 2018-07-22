@@ -12,6 +12,7 @@
     "debug": "~2.6.9",
     "express": "~4.16.0",
     "express-validation": "^1.0.2",
+    "helmet": "^3.12.2",
     "http-errors": "~1.6.2",
     "http-status": "^1.2.0",
     "jade": "~1.11.0",
