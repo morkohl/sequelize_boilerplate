@@ -51,7 +51,8 @@ module.exports = function (sequelize, DataTypes) {
     };
 
     User.associate = function (models) {
-        models.User.hasMany(models.Task)
+        models.User.hasMany(models.Task);
+        models.User.hasMany(models.RefreshToken);
     };
 
 

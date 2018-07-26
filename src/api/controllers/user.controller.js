@@ -1,4 +1,4 @@
-const db = require('../models/');
+const db = require('../models/db');
 const httpStatus = require('http-status');
 const resWithSuccess = require('../utils/utils').resWithSuccess;
 const APIError = require('../utils/APIError');

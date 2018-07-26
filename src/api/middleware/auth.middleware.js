@@ -1,43 +1,92 @@
 const jwt = require('jsonwebtoken');
-const cert = "TEST" | "PROD";
-const db = require('../models');
+const httpStatus = require('http-status');
+const db = require('../models/db');
+const APIError = require('../utils/APIError');
+const {
+    algorithms,
+    jwtSecret,
+    accessTokenDuration,
+    refreshTokenDuration
+} = require('../../config/config').authentication.jwt;
 
-module.exports = function authenticate(req, res, next) {
-    if (req.)
-};
 
-const decode = function (req, res, next) {
+module.exports = async function authenticate(req, res, next) {
     const accessHeader = req.headers["x-access-token"];
     const refreshHeader = req.headers["x-refresh-token"];
 
-    if(accessHeader && refreshHeader) {
-        req.accessToken = accessHeader.split(' ')[1];
-        req.refreshToken = refreshHeader;
+    if (accessHeader && refreshHeader) {
+        const accessToken = req.accessToken = accessHeader ; //accessHeader.split(' ')[1]
+        const refreshToken = req.refreshToken = refreshHeader;
 
+        let err = new APIError({
+            message: "Forbidden",
+            status: httpStatus.UNAUTHORIZED
+        });
+
+        let userId;
+
+        try {
+            const accessTokenResult = await verifyToken(accessToken);
+
+            if (!accessTokenResult) {
+                const refreshTokenResult = await verifyToken(refreshToken);
+
+                if (!refreshTokenResult) {
+                    const persistedRefreshToken = await db.RefreshToken.findOne({
+                        where: {
+                            token: req.refreshToken
+                        }
+                    });
+
+                    userId = persistedRefreshToken.userId;
+
+                    if (!persistedRefreshToken.valid) {
+                        return next(err);
+                    }
+
+                    const newRefreshToken = createNewToken(userId, refreshTokenDuration);
+
+                    await db.RefreshToken.create({ token: newRefreshToken });
+
+                    res.set({
+                        'x-access-token': createNewToken(userId, accessTokenDuration),
+                        'x-refresh-token': newRefreshToken
+                    });
+
+                } else {
+                    userId = refreshTokenResult.data.userId;
+
+                    res.set({
+                        'x-access-token': createNewToken(userId)
+                    });
+
+                }
+            } else {
+                userId = accessTokenResult.data.userId;
+            }
+
+            req.locals.user = await db.User.findById(userId);
+            return next();
+        } catch(err) {
+            next(err);
+        }
+
+    } else {
+        return next(err);
     }
 };
 
-//check refresh token and generate new acceess token. else onRefreshTokenExpired
-const onAccessTokenExpired = function (req, res, next) {
-
+const verifyToken = async function(token) {
+    return new Promise((resolve, reject) => {
+        jwt.verify(token, jwtSecret, algorithms, async (err, payload) => {
+            if (err instanceof jwt.TokenExpiredError) { resolve(false); }
+            else if (err) { reject(err); }
+            else { resolve(payload)}
+        })
+    })
 };
 
-//check if refreshToken disabled in database. if not generate new refreshtoken. else send error
-const onRefreshTokenExpired = function (req, res, next) {
-
-};
-
-//create a new access or refresh token
-const createNewToken = function(req, res, next) {
-
-};
-
-//set the new tokens
-const setHeaders = function(req, res, next) {
-
-};
-
-//get the corresponding user
-const getUser = function () {
-
+const createNewToken = function (userId, expiresIn) {
+    const payload = { data: { userId: userId }};
+    return jwt.sign(payload, jwtSecret, expiresIn);
 };

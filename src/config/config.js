@@ -14,6 +14,14 @@ module.exports = {
                 idle: 10000
             }
         }
-
     },
+    authentication: {
+        jwt: {
+            jwtSecret: "very very secret!",
+            algorithms: ["HS256"],
+            accessTokenDuration: '15m',
+            refreshTokenDuration: '7d'
+        },
+
+    }
 };
