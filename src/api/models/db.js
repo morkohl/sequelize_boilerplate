@@ -1,11 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 const basename = path.basename(__filename);
-const ModelSetup = require('sequelize');
+const Sequelize = require('sequelize');
 const config = require('../../config/config');
 const db = {};
 
-const sequelize = new ModelSetup(
+const sequelize = new Sequelize(
     config.database.database,
     config.database.username,
     config.database.password,
@@ -33,6 +33,6 @@ Object.keys(db).forEach(modelName => {
 });
 
 db.sequelize = sequelize;
-db.Sequelize = ModelSetup;
+db.Sequelize = Sequelize;
 
 module.exports = db;

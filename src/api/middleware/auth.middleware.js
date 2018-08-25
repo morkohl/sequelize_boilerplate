@@ -7,9 +7,10 @@ const {
     jwtSecret,
     accessTokenDuration,
     refreshTokenDuration
-} = require('../../config/config').authentication.jwt;
+} = require('../../config/config').security.jwt;
 
-
+//rework with nested functions.. look at express-validation code!
+//add multiple device support
 module.exports = async function authenticate(req, res, next) {
     const accessHeader = req.headers["x-access-token"];
     const refreshHeader = req.headers["x-refresh-token"];
@@ -46,12 +47,7 @@ module.exports = async function authenticate(req, res, next) {
 
                     const newRefreshToken = createNewToken(userId, refreshTokenDuration);
 
-                    await db.RefreshToken.create({ token: newRefreshToken });
-
-                    res.set({
-                        'x-access-token': createNewToken(userId, accessTokenDuration),
-                        'x-refresh-token': newRefreshToken
-                    });
+                    setTokens(res)
 
                 } else {
                     userId = refreshTokenResult.data.userId;
@@ -90,3 +86,21 @@ const createNewToken = function (userId, expiresIn) {
     const payload = { data: { userId: userId }};
     return jwt.sign(payload, jwtSecret, expiresIn);
 };
+
+const persistRefreshToken = function (user, refreshToken) {
+    return db.RefreshToken.create({
+        token: refreshToken,
+        userId: user.id
+    })
+};
+
+const setTokens = async function (res, user) {
+    const refreshToken = createNewToken(user.id, refreshTokenDuration);
+    await persistRefreshToken(user, refreshToken);
+    return res.set({
+        'x-access-token': createNewToken(user.id, accessTokenDuration),
+        'x-refresh-token': refreshToken
+    });
+};
+
+exports.setTokens = setTokens;
