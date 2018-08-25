@@ -1,4 +1,4 @@
-const dotenv = require('dotenv').config({path: `${require('app-root-path').path}/.env`});
+const config = require('./config/config');
 const express = require('express');
 const logger = require('morgan');
 const errorHandler = require('./api/middleware/error.middleware');
@@ -22,7 +22,7 @@ app.use(errorHandler.converter);
 app.use(errorHandler.handler);
 
 models.sequelize.sync().then(() => {
-    app.listen(8080);
+    app.listen(config.port);
 });
 
 module.exports = app;
