@@ -1,3 +1,4 @@
+const dotenv = require('dotenv').config({path: `${require('app-root-path').path}/.env`});
 const express = require('express');
 const logger = require('morgan');
 const errorHandler = require('./api/middleware/error.middleware');
