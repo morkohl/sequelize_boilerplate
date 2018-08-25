@@ -3,8 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start:prod": "NODE_ENV=PROD && node src/app.js",
-    "start:dev": "NODE_ENV=DEV && node src/app.js"
+    "start:prod": "NODE_ENV=PROD node src/app.js",
+    "start:dev": "NODE_ENV=DEV node src/app.js",
+    "startwin:prod": "SET NODE_ENV=PROD & node src/app.js",
+    "startwin:dev": "SET NODE_ENV=DEV & node src/app.js"
   },
   "dependencies": {
     "app-root-path": "^2.1.0",
