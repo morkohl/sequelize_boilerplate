@@ -15,4 +15,3 @@ router.get('/:userId/task/', taskController.getAllTasks);
 router.get('/:userId/task/:taskId', taskController.getTask);
 
 router.put('/:userId/task/:taskId', validate(change), taskController.changeTask);
-

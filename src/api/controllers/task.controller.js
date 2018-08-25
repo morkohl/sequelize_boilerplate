@@ -5,7 +5,7 @@ const resWithSuccess = require('../utils/utils').resWithSuccess;
 exports.createTask = async function (req, res, next) {
     try {
         const task = await db.Task.create(req.body.task);
-        return resWithSuccess(res, task, httpStatus.CREATED);
+        return await resWithSuccess(res, task, httpStatus.CREATED);
     } catch (err) {
         next(err);
     }
@@ -20,7 +20,7 @@ exports.getTask = async function (req, res, next) {
                     userId: req.params.userId
                 }
             });
-        resWithSuccess(res, task)
+        return await resWithSuccess(res, task)
     } catch (err) {
         next(err);
     }
@@ -35,7 +35,7 @@ exports.getAllTasks = async function (req, res, next) {
                 }
             }
         );
-        resWithSuccess(res, tasks);
+        await resWithSuccess(res, tasks);
     } catch (err) {
         next(err);
     }
@@ -52,7 +52,7 @@ exports.changeTask = async function (req, res, next) {
                 }
             }
         );
-        resWithSuccess(res, updatedRows)
+        await resWithSuccess(res, updatedRows)
     } catch (err) {
         next(err);
     }
