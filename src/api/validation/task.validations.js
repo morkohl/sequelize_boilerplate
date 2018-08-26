@@ -7,7 +7,7 @@ module.exports = {
                 taskName: Joi.string().required(),
                 maximumTaskPoints: Joi.number().min(0).max(50).required(),
                 currentTaskPoints: Joi.number().min(0).max(50).required(),
-                taskStatus: Joi.any.forbidden()
+                taskStatus: Joi.any().forbidden()
             }
         }
     },
@@ -17,7 +17,7 @@ module.exports = {
                 taskName: Joi.string(),
                 maximumTaskPoints: Joi.number().min(0).max(50),
                 currentTaskPoints: Joi.number().min(0).max(50),
-                taskStatus: Joi.any.forbidden()
+                taskStatus: Joi.any().forbidden()
             }
 
         }

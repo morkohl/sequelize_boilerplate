@@ -10,10 +10,19 @@ class APIError extends Error {
         super(message);
         this.name = 'APIError';
         this.message = message;
-        this.errors = errors;
+        this.errors = errors.map((err) => {return { name: err.name, message: err.message }});
         this.status = status;
-        this.isOperational = true;
         stack ? this.stack = stack : Error.captureStackTrace(this, APIError)
+    }
+
+    static validationError(errors) {
+        let err =  new APIError({
+            message: errors.map(err => err.message).join('; '),
+            status: httpStatus.BAD_REQUEST,
+            errors: errors
+        });
+        err.details = [];
+        return err;
     }
 }
 

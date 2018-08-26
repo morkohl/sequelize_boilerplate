@@ -15,14 +15,14 @@ module.exports = async function authenticate(req, res, next) {
     const accessHeader = req.headers["x-access-token"];
     const refreshHeader = req.headers["x-refresh-token"];
 
+    let err = new APIError({
+        message: "Forbidden",
+        status: httpStatus.UNAUTHORIZED
+    });
+
     if (accessHeader && refreshHeader) {
         const accessToken = req.accessToken = accessHeader ; //accessHeader.split(' ')[1]
         const refreshToken = req.refreshToken = refreshHeader;
-
-        let err = new APIError({
-            message: "Forbidden",
-            status: httpStatus.UNAUTHORIZED
-        });
 
         let userId;
 

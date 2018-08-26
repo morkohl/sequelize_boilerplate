@@ -6,6 +6,7 @@ const handler = function (err, req, res, next) {
     const errorResponse = {
         success: false,
         status: err.status,
+        timestamp: new Date().toUTCString(),
         error: {
             message: err.message || httpStatus[err.status],
             errors: err.errors,
@@ -13,23 +14,21 @@ const handler = function (err, req, res, next) {
         }
     };
 
-    if (process.env.NODE_ENV !== 'development') {
-        delete errorResponse.errorstack;
+    if (process.env.NODE_ENV !== 'DEV') {
+        delete errorResponse.error.stack;
     }
-
-    errorResponse.timestamp = new Date().toUTCString();
 
     res.status(err.status).send(errorResponse);
 
-    if (!err.isOperational) {
+    if (err.status >= 500) {
         console.error(err);
+        //add log message
         process.exit(1);
     }
 };
 
 exports.converter = function (err, req, res, next) {
     let convertedError = err;
-
 
     if (!(err instanceof APIError)) {
         convertedError = new APIError({
@@ -39,8 +38,11 @@ exports.converter = function (err, req, res, next) {
         });
     }
 
-    //this is good but we also have to include some way of identifiying validation errors from joi!
-    //one way to do it would be searching through all the keys of any schema and identifiying the key back in the stack
+    //bodyparser errors
+    if(err instanceof SyntaxError) {
+        convertedError.status = httpStatus.BAD_REQUEST
+    }
+
     if(err instanceof Sequelize.ValidationError) {
         convertedError.status = httpStatus.UNPROCESSABLE_ENTITY;
     }
