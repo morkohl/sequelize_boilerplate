@@ -1,13 +1,16 @@
-const environment = require('dotenv').config({path: `${require('app-root-path').path}/.env`}).parsed;
+let environment = {};
 
+if(process.env.NODE_ENV === 'PROD') {
+    environment = require('dotenv').config({path: `${require('app-root-path').path}/.env`}).parsed
+}
 
 module.exports = {
     database: {
         username: environment.DB_USER || 'root',
         password: environment.DB_PASS || 'root',
         database: environment.DB_NAME || 'local_db',
-        dialect: environment.SEQUELIZE_DIALECT || 'sqlite',
         options: {
+            dialect: environment.SEQUELIZE_DIALECT || 'sqlite',
             host: environment.DB_HOST || 'localhost',
             port: environment.DB_PORT || '3306',
             pool: {
@@ -26,5 +29,5 @@ module.exports = {
             refreshTokenDuration: environment.SECURITY_JWT_REFRESH_TOKEN || '7d'
         },
     },
-    port: environment.PORT | 8080
+    port: environment.PORT || 8080
 };
