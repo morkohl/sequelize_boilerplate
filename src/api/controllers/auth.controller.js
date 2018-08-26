@@ -1,6 +1,6 @@
 const db = require('../models/db');
 const httpStatus = require('http-status');
-const resWithSuccess = require('../utils/utils').resWithSuccess;
+const respondSuccess = require('../utils/utils').respondSuccess;
 const APIError = require('../utils/APIError');
 const auth = require('../middleware/auth.middleware');
 
@@ -15,7 +15,7 @@ exports.register = async function (req, res, next) {
         const user = result[0];
         const created = result[1];
         if (created) {
-            return resWithSuccess(res, user, httpStatus.CREATED);
+            return respondWithData(res, user, httpStatus.CREATED);
         }
         next(new APIError({
             message: "User already registered"
@@ -38,7 +38,7 @@ exports.login = async function (req, res, next) {
             const validPassword = await user.validPassword(req.body.user.password);
             if (validPassword) {
                 await auth.setTokens(res, user);
-                return resWithSuccess();
+                return respondSuccess(res);
             }
         }
         next(new APIError({
@@ -65,7 +65,7 @@ exports.logout = async function (req, res, next) {
                 {
                     valid: 0
                 });
-            return resWithSuccess(res);
+            return respondSuccess(res);
         }
 
         next(new APIError({

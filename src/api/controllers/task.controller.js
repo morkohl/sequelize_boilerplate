@@ -1,11 +1,11 @@
 const db = require('../models/db');
 const httpStatus = require('http-status');
-const resWithSuccess = require('../utils/utils').resWithSuccess;
+const respondWithData = require('../utils/utils').respondWithData;
 
 exports.createTask = async function (req, res, next) {
     try {
         const task = await db.Task.create(req.body.task);
-        return await resWithSuccess(res, task, httpStatus.CREATED);
+        return await respondWithData(res, task, httpStatus.CREATED);
     } catch (err) {
         next(err);
     }
@@ -20,7 +20,7 @@ exports.getTask = async function (req, res, next) {
                     userId: req.params.userId
                 }
             });
-        return await resWithSuccess(res, task)
+        return await respondWithData(res, task)
     } catch (err) {
         next(err);
     }
@@ -35,7 +35,7 @@ exports.getAllTasks = async function (req, res, next) {
                 }
             }
         );
-        await resWithSuccess(res, tasks);
+        await respondWithData(res, tasks);
     } catch (err) {
         next(err);
     }
@@ -52,7 +52,7 @@ exports.changeTask = async function (req, res, next) {
                 }
             }
         );
-        await resWithSuccess(res, updatedRows)
+        await respondWithData(res, updatedRows)
     } catch (err) {
         next(err);
     }
