@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(helmet());
 
-app.use(auth);
+//app.use(auth);
 
 app.use('/v1', routes);
 
