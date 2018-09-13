@@ -19,7 +19,7 @@ app.use(helmet());
 
 //app.use(auth);
 
-app.use('/v1', routes);
+app.use('/api/v1', routes);
 
 app.use(errorHandler.notFound);
 app.use(errorHandler.converter);

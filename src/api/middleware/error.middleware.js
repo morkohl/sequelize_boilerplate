@@ -6,7 +6,7 @@ const handler = function (err, req, res, next) {
     const errorResponse = {
         success: false,
         status: err.status,
-        timestamp: new Date().toUTCString(),
+        timestamp: new Date().getTime(),
         error: {
             message: err.message || httpStatus[err.status],
             errors: err.errors,

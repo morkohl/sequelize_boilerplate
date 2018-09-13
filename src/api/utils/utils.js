@@ -16,7 +16,7 @@ exports.respondWithData = function (res, data, status = httpStatus.OK) {
     const successResponse = {
         success: true,
         status: status,
-        timestamp: new Date().toUTCString()
+        timestamp: new Date().getTime()
     };
 
     if (!data || data.length === 0) {
@@ -35,7 +35,7 @@ exports.respondSuccess = function (res, status = httpStatus.OK) {
     const successResponse = {
         success: true,
         status: status,
-        timestamp: new Date().toUTCString()
+        timestamp: new Date().getTime()
     };
 
     res.status(status).send(successResponse);
