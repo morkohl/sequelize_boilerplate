@@ -3,8 +3,11 @@ const express = require('express');
 const logger = require('morgan');
 const errorHandler = require('./api/middleware/error.middleware');
 const helmet = require('helmet');
-const auth = require('./api/middleware/auth.middleware');
+const passport = require('passport');
 const bodyParser = require('body-parser');
+const cors = require('cors');
+
+const passportStrategies = require('./config/passport');
 
 const routes = require('./api/routes/v1');
 
@@ -16,8 +19,10 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(helmet());
+app.use(cors());
 
-//app.use(auth);
+app.use(passport.initialize());
+passport.use(passportStrategies.jwtStrategy);
 
 app.use('/api/v1', routes);
 

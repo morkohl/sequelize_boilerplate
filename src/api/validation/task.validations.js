@@ -9,6 +9,10 @@ module.exports = {
                 currentTaskPoints: Joi.number().min(0).max(50).required(),
                 taskStatus: Joi.any().forbidden()
             })
+        },
+        params: {
+            userId: Joi.number().required(),
+            taskId: Joi.number().required()
         }
     },
     change: {
@@ -20,6 +24,21 @@ module.exports = {
                 taskStatus: Joi.any().forbidden()
 
             })
+        },
+        params: {
+            userId: Joi.number().required(),
+            taskId: Joi.number().required()
+        }
+    },
+    userAndTaskParams: {
+        params: {
+            userId: Joi.number().required(),
+            taskId: Joi.number().required()
+        }
+    },
+    userParams: {
+        params: {
+            userId: Joi.number().required()
         }
     }
 };

@@ -26,7 +26,8 @@ module.exports = {
             jwtSecret: environment.SECURITY_JWT_SECRET || "localdevsecret",
             algorithms: environment.SECURITY_JWT_ALGORITHM ? [environment.SECURITY_JWT_ALGORITHM] : ['HS256'],
             accessTokenDuration: environment.SECURITY_JWT_ACCESS_TOKEN || '15m',
-            refreshTokenDuration: environment.SECURITY_JWT_REFRESH_TOKEN || '7d'
+            refreshTokenDuration: environment.SECURITY_JWT_REFRESH_TOKEN || '7d',
+            tokenPrefix: environment.SECURITY_JWT_PREFIX || 'Bearer'
         },
     },
     port: environment.PORT || 8080

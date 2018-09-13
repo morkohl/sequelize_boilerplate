@@ -3,37 +3,48 @@ const APIError = require('../utils/APIError');
 const httpStatus = require('http-status');
 
 exports.validate = function (schema, options) {
-    if(!options) {
-        options = { abortEarly: false };
+    if (!options) {
+        options = {abortEarly: false};
     }
 
-    if(schema) {
+    if (schema) {
         return function (req, res, next) {
-            if(schema.body) {
-                Joi.validate(req.body, schema.body, options, (err) => {
-                    if(err) { next(apiValidationError(err)) }
+            let errors = [];
+            if (schema.params) {
+                Joi.validate(req.params, schema.params, options, (err) => {
+                    if (err) { errors.push(err); }
                 });
             }
-            if(schema.query) {
+            if (schema.body) {
                 Joi.validate(req.body, schema.body, options, (err) => {
-                    if(err) { next(apiValidationError(err)); }
+                    if (err) { errors.push(err); }
                 });
             }
-            return next();
+            if (schema.query) {
+                Joi.validate(req.body, schema.body, options, (err) => {
+                    if (err) { errors.push(err); }
+                });
+            }
+            if (errors.length !== 0) {
+                return next(apiValidationError(errors));
+            }
+            next()
         }
     }
     throw new Error("No schema provided");
 };
 
-const apiValidationError = function(joiError) {
+const apiValidationError = function (joiErrors) {
     return new APIError({
-        message: joiError.name,
+        message: joiErrors[0].name,
         status: httpStatus.BAD_REQUEST,
-        errors: joiError.details.map(err => {
-            return {
-                name: "Validation Error",
-                message: err.message
-            }
-        })
-    });
+        errors: joiErrors.map(joiError => {
+            return joiError.details.map(errorDetail => {
+                return {
+                    name: "ValidationError",
+                    message: errorDetail.message
+                }
+            })
+        }).reduce((acc, arr) => acc.concat(arr))
+    })
 };

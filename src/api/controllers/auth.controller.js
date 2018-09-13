@@ -2,7 +2,7 @@ const db = require('../models/db');
 const httpStatus = require('http-status');
 const respondSuccess = require('../utils/utils').respondSuccess;
 const APIError = require('../utils/APIError');
-const auth = require('../middleware/auth.middleware');
+const auth = require('../middleware/auth.middleware.deprecated');
 
 exports.register = async function (req, res, next) {
     try {

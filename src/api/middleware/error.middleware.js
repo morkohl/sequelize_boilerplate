@@ -22,7 +22,6 @@ const handler = function (err, req, res, next) {
 
     if (err.status >= 500) {
         console.error(err);
-        //add log message
         process.exit(1);
     }
 };
@@ -38,13 +37,8 @@ exports.converter = function (err, req, res, next) {
         });
     }
 
-    //bodyparser errors
     if(err instanceof SyntaxError) {
         convertedError.status = httpStatus.BAD_REQUEST
-    }
-
-    if(err instanceof Sequelize.ValidationError) {
-        convertedError.status = httpStatus.UNPROCESSABLE_ENTITY;
     }
 
     handler(convertedError, req, res)
