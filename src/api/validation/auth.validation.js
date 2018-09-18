@@ -18,6 +18,11 @@ module.exports = {
                 email: Joi.string().email().required(),
                 password: Joi.string().regex(passwordRegex).required()
             })
+        },
+    },
+    refresh: {
+        body: {
+            refreshToken: Joi.string().required()
         }
     }
 };

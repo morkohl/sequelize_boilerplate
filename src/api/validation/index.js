@@ -2,7 +2,7 @@ const Joi = require('joi');
 const APIError = require('../utils/APIError');
 const httpStatus = require('http-status');
 
-exports.validate = function (schema, options) {
+module.exports = function (schema, options) {
     if (!options) {
         options = {abortEarly: false};
     }
