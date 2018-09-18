@@ -1,13 +1,10 @@
-const config = require('./config/config');
+const config = require('./config');
 const express = require('express');
 const logger = require('morgan');
 const errorHandler = require('./api/middleware/error.middleware');
 const helmet = require('helmet');
-const passport = require('passport');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-
-const passportStrategies = require('./config/passport');
 
 const routes = require('./api/routes/v1');
 
@@ -20,9 +17,6 @@ app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(helmet());
 app.use(cors());
-
-app.use(passport.initialize());
-passport.use(passportStrategies.jwtStrategy);
 
 app.use('/api/v1', routes);
 
