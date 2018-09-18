@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 
 class APIError extends Error {
     constructor({
-                    message,
+                    message = httpStatus[status],
                     status = httpStatus.INTERNAL_SERVER_ERROR,
                     errors = [],
                     stack = null

@@ -1,18 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const validate = require('../../validation/validate').validate;
+const validate = require('../../validation');
 const userController = require('../../controllers/user.controller');
-
-const passport = require('passport');
+const authenticate = require('../../middleware/auth.middleware');
 
 const {
     change,
     userParams
 } = require('../../validation/user.validations');
 
-router.get('/', userController.getAll);
-router.get('/:userId', validate(userParams), userController.getUser);
+router.get('/', authenticate(), userController.getAll);
+router.get('/:userId', validate(userParams), authenticate(), userController.getUser);
 
-router.put('/:userId', validate(change), passport.authenticate('jwt', {session: false}), userController.changeUser);
+router.put('/:userId', validate(change), authenticate(), userController.changeUser);
 
 module.exports = router;
