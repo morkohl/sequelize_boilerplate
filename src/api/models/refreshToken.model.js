@@ -1,3 +1,5 @@
+const utils = require('../utils');
+
 module.exports = function (sequelize, DataTypes) {
     const RefreshToken = sequelize.define('refreshToken', {
         token: {
@@ -18,6 +20,21 @@ module.exports = function (sequelize, DataTypes) {
                 allowNull: false
             }
         })
+    };
+
+    RefreshToken.createTokenPair = async function (user) {
+        const accessToken = await utils.createJWT({ sub: user.id });
+        const refreshToken = utils.createRefreshToken();
+
+        await RefreshToken.create({
+            token: refreshToken,
+            userId: user.id
+        });
+
+        return {
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+        }
     };
 
     return RefreshToken;

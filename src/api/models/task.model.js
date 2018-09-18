@@ -29,7 +29,7 @@ module.exports = function (sequelize, DataTypes) {
         }
     });
 
-    Task.association = function(models) {
+    Task.associate = function(models) {
         models.Task.belongsTo(models.User, {
             constraints: true,
             onDelete: 'CASCADE',

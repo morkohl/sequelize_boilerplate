@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const utils = require('../utils/utils');
+const utils = require('../utils/index');
 
 module.exports = function (sequelize, DataTypes) {
     const User = sequelize.define('user', {
@@ -37,24 +37,13 @@ module.exports = function (sequelize, DataTypes) {
     User.hook('beforeUpdate', utils.hashPassword);
 
     User.prototype.validPassword = function (password) {
-        return new Promise((resolve, reject) => {
-            bcrypt.compare(password, this.password, (err, isMatch) => {
-                if (err) {
-                    return reject(err);
-                }
-                if (isMatch) {
-                    return resolve(this);
-                }
-                resolve(false);
-            })
-        })
+        return bcrypt.compare(password, this.password)
     };
 
     User.associate = function (models) {
         models.User.hasMany(models.Task);
         models.User.hasMany(models.RefreshToken);
     };
-
 
     return User;
 };
