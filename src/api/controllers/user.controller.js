@@ -1,5 +1,5 @@
 const db = require('../models/db');
-const respondWithData = require('../utils/utils').respondWithData;
+const respondWithData = require('../utils').respondWithData;
 
 exports.getUser = async function (req, res, next) {
     try {

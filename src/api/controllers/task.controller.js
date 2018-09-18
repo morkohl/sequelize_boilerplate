@@ -1,6 +1,6 @@
 const db = require('../models/db');
 const httpStatus = require('http-status');
-const respondWithData = require('../utils/utils').respondWithData;
+const respondWithData = require('../utils').respondWithData;
 
 exports.createTask = async function (req, res, next) {
     try {

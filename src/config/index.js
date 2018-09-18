@@ -23,12 +23,18 @@ module.exports = {
     },
     security: {
         jwt: {
-            jwtSecret: environment.SECURITY_JWT_SECRET || "localdevsecret",
-            algorithms: environment.SECURITY_JWT_ALGORITHM ? [environment.SECURITY_JWT_ALGORITHM] : ['HS256'],
-            accessTokenDuration: environment.SECURITY_JWT_ACCESS_TOKEN || '15m',
-            refreshTokenDuration: environment.SECURITY_JWT_REFRESH_TOKEN || '7d',
-            tokenPrefix: environment.SECURITY_JWT_PREFIX || 'Bearer'
+            accessToken: {
+                prefix: environment.SECURITY_JWT_PREFIX || 'Bearer',
+                header: environment.SECURITY_JWT_HEADER || 'X-Access-Token',
+                secret: environment.SECURITY_JWT_SECRET || "localdevsecret",
+                algorithms: environment.SECURITY_JWT_ALGORITHM ? [environment.SECURITY_JWT_ALGORITHM] : ['HS256'],
+                expiresIn: environment.SECURITY_JWT_ACCESS_TOKEN || '15m'
+            },
         },
+        refreshToken: {
+            tokenLength: environment.SECURITY_REFRESH_TOKEN_LENGTH || 256
+        }
+
     },
     port: environment.PORT || 8080
 };
