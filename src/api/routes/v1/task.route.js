@@ -11,11 +11,11 @@ const {
     userParams
 } = require('../../validation/task.validations');
 
-router.post('/:userId/task', validate(create), authenticate(), taskController.createTask);
+router.post('/:userId/task', authenticate(), validate(create), taskController.createTask);
 
-router.get('/:userId/task/', validate(userParams), authenticate(), taskController.getAllTasks);
-router.get('/:userId/task/:taskId', validate(userAndTaskParams), authenticate(), taskController.getTask);
+router.get('/:userId/task/', authenticate(), validate(userParams), taskController.getAllTasks);
+router.get('/:userId/task/:taskId', authenticate(), validate(userAndTaskParams), taskController.getTask);
 
-router.put('/:userId/task/:taskId', validate(change), authenticate(), taskController.changeTask);
+router.put('/:userId/task/:taskId', authenticate(), validate(change), taskController.changeTask);
 
 module.exports = router;

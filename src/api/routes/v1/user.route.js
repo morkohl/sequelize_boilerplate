@@ -10,8 +10,8 @@ const {
 } = require('../../validation/user.validations');
 
 router.get('/', authenticate(), userController.getAll);
-router.get('/:userId', validate(userParams), authenticate(), userController.getUser);
+router.get('/:userId', authenticate(), validate(userParams), userController.getUser);
 
-router.put('/:userId', validate(change), authenticate(), userController.changeUser);
+router.put('/:userId', authenticate(), validate(change), userController.changeUser);
 
 module.exports = router;
