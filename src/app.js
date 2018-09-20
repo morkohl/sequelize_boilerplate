@@ -8,7 +8,7 @@ const cors = require('cors');
 
 const routes = require('./api/routes/v1');
 
-const models = require('./api/models/db');
+const db = require('./api/models');
 
 const app = express();
 
@@ -24,7 +24,7 @@ app.use(errorHandler.notFound);
 app.use(errorHandler.converter);
 app.use(errorHandler.handler);
 
-models.sequelize.sync().then(() => {
+db.sequelize.sync().then(() => {
     app.listen(config.port);
     console.log(`Server started on port: ${config.port}\nUsed environment: ${process.env.NODE_ENV}`)
 });
