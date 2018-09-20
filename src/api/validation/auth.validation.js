@@ -14,7 +14,7 @@ module.exports = {
     register: {
         body: {
             user: Joi.object({
-                username: Joi.string().regex(/^[a-z1-9]+$/).required(),
+                username: Joi.string().regex(/^[A-Za-z1-9]+$/).required(),
                 email: Joi.string().email().required(),
                 password: Joi.string().regex(passwordRegex).required()
             })

@@ -5,7 +5,7 @@ module.exports = {
         body: {
             user: Joi.object({
                 email: Joi.string().email().required(),
-                username: Joi.string().regex(/^[a-z1-9]+$/).required()
+                username: Joi.string().regex(/^[A-Za-z1-9]+$/i).required()
             }).required()
         },
         params: {
