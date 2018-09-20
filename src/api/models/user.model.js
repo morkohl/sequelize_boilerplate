@@ -3,10 +3,6 @@ const utils = require('../utils/index');
 
 module.exports = function (sequelize, DataTypes) {
     const User = sequelize.define('user', {
-            id: {
-                type: DataTypes.BIGINT,
-                primaryKey: true
-            },
             username: {
                 type: DataTypes.STRING,
             },
@@ -31,19 +27,22 @@ module.exports = function (sequelize, DataTypes) {
                     fields: ['username']
                 }
 
-            ]
-        });
-    User.hook('beforeCreate', utils.hashPassword);
-    User.hook('beforeUpdate', utils.hashPassword);
+            ],
+        }
+    );
+    User.beforeCreate(utils.hashPassword);
+    User.beforeUpdate(utils.hashPassword);
 
-    User.prototype.validPassword = function (password) {
-        return bcrypt.compare(password, this.password)
-    };
 
     User.associate = function (models) {
         models.User.hasMany(models.Task);
         models.User.hasMany(models.RefreshToken);
     };
+
+    User.prototype.validPassword = function (password) {
+        return bcrypt.compare(password, this.password);
+    };
+
 
     return User;
 };

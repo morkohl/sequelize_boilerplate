@@ -12,6 +12,10 @@ module.exports = function (sequelize, DataTypes) {
         }
     });
 
+    RefreshToken.prototype.refreshAccessToken = function (payload) {
+        return utils.createJWT(payload);
+    };
+
     RefreshToken.associate = function (models) {
         models.RefreshToken.belongsTo(models.User, {
             constraints: true,

@@ -43,12 +43,12 @@ module.exports = function (sequelize, DataTypes) {
         return this.currentTaskPoints / this.maximumTaskPoints;
     };
 
-    const getStatus = function(task) {
-        return task.currentTaskPoints < task.maximumTaskPoints ? STATUSES.active : STATUSES.completed;
-    };
-
-    Task.hook('beforeCreate', getStatus);
-    Task.hook('beforeUpdate', getStatus);
+    Task.beforeCreate(getStatus);
+    Task.beforeUpdate(getStatus);
 
     return Task;
+};
+
+const getStatus = function(task) {
+    return task.currentTaskPoints < task.maximumTaskPoints ? STATUSES.active : STATUSES.completed;
 };
