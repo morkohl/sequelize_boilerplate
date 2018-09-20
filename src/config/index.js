@@ -18,7 +18,8 @@ module.exports = {
                 min: environment.DB_POOL_MIN_CONNECTIONS || 0,
                 acquire: environment.DB_POOL_ACQUIRE_TIME || 30000,
                 idle: environment.DB_POOL_IDLE_TIME || 10000
-            }
+            },
+            logging: environment.DB_LOGGING || true,
         }
     },
     security: {
