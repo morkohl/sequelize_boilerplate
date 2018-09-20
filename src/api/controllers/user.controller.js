@@ -1,4 +1,4 @@
-const db = require('../models/db');
+const db = require('../models');
 const respondWithData = require('../utils').respondWithData;
 
 exports.getUser = async function (req, res, next) {

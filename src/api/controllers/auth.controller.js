@@ -1,24 +1,27 @@
-const db = require('../models/db');
+const db = require('../models');
 const httpStatus = require('http-status');
 const utils = require('../utils');
 const APIError = require('../utils/APIError');
 
 exports.register = async function (req, res, next) {
     try {
-        const result = db.User.findOrCreate({
+        const foundUser = await db.User.find({
             where: {
                 username: req.body.user.username,
                 email: req.body.user.email
             }
         });
-        const user = result[0];
-        const created = result[1];
-        if (created) {
-            return utils.respondWithData(res, user, httpStatus.CREATED);
+
+        if(foundUser) {
+            next(new APIError({
+                message: 'User already registered',
+                status: httpStatus.UNAUTHORIZED
+            }))
         }
-        next(new APIError({
-            message: "User already registered"
-        }));
+
+        const newUser = await db.User.create(req.body.user);
+
+        return utils.respondWithData(res, newUser, httpStatus.CREATED);
     } catch (err) {
         next(err);
     }
@@ -29,11 +32,13 @@ exports.login = async function (req, res, next) {
         const user = await db.User.findOne(
             {
                 where: {
-                    username: req.body.user.username
+                    email: req.body.user.email
                 }
             });
 
-        if (user && await user.validPassword(password)) {
+        console.log(user ? "User found!" : "USER NOT FOUND!");
+
+        if (user && await user.validPassword(req.body.user.password)) {
             const tokens = await db.RefreshToken.createTokenPair(user);
             res = utils.setTokenHeader(res, tokens.accessToken);
             delete tokens.accessToken;
@@ -83,7 +88,6 @@ exports.refresh = async function (req, res, next) {
             }
         });
 
-
         if (!(refreshToken && refreshToken.valid)) {
             next(new APIError({
                 message: refreshToken.valid ? 'Unknown refresh token' : 'Invalid refresh token',
@@ -96,7 +100,7 @@ exports.refresh = async function (req, res, next) {
         if(!user) {
             next(new APIError({
                 message: 'Unknown user',
-                status: httpStatus.unauthorized
+                status: httpStatus.UNAUTHORIZED
             }))
         }
 
@@ -107,11 +111,11 @@ exports.refresh = async function (req, res, next) {
             }
         });
 
-        const tokens = await refreshToken.createTokenPair(user);
+        const refreshedAccessToken = await refreshToken.refreshAccessToken({ sub: user.id });
 
-        res = utils.setTokenHeader(res, tokens.accessToken);
-        delete tokens.accessToken;
-        return utils.respondWithData(res, tokens, httpStatus.CREATED);
+        res = utils.setTokenHeader(res, refreshedAccessToken);
+
+        return utils.utils.respondSuccess(res, httpStatus.CREATED);
     } catch (err) {
         next(err);
     }
