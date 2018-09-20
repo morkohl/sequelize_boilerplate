@@ -6,8 +6,8 @@ const APIError = require('./APIError');
 const config = require('../../config');
 const randToken = require('rand-token');
 
-exports.hashPassword = function (user) {
-    return bcrypt.hash(user.password, salt);
+exports.hashPassword = async function (user) {
+    return user.password = await bcrypt.hash(user.password, salt);
 };
 
 //response utils
@@ -42,9 +42,14 @@ exports.respondSuccess = function (res, status = httpStatus.OK) {
 
 //auth utils
 exports.extractToken = async function (req, options = config.security.jwt.accessToken) {
-    const headerValue = req.headers[options.header].trim();
-    const prefixAndToken = headerValue.split(' ');
-    return !!headerValue && prefixAndToken[0] === options.prefix && prefixAndToken[1] ? prefixAndToken[1] : false;
+    const headerValue = req.headers[options.header.toLowerCase()];
+    if(!headerValue) {
+        return false;
+    }
+    const prefixAndToken = headerValue.trim().split(' ');
+    const prefix= prefixAndToken[0];
+    const token = prefixAndToken[1];
+    return prefix && token && prefix === options.prefix && token;
 };
 
 exports.verifyToken = async function (token, options = config.security.jwt.accessToken) {
