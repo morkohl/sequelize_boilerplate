@@ -3,6 +3,15 @@ const Joi = require('joi');
 const passwordRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*[#?!@$%^&*-]?).{8,}$/;
 
 module.exports = {
+    register: {
+        body: {
+            user: Joi.object({
+                username: Joi.string().regex(/^[\w\-]+$/).required(),
+                email: Joi.string().email().required(),
+                password: Joi.string().regex(passwordRegex).required()
+            })
+        },
+    },
     login: {
         body: {
             user: Joi.object({
@@ -10,15 +19,6 @@ module.exports = {
                 password: Joi.string().regex(passwordRegex).required()
             })
         }
-    },
-    register: {
-        body: {
-            user: Joi.object({
-                username: Joi.string().regex(/^[A-Za-z1-9]+$/).required(),
-                email: Joi.string().email().required(),
-                password: Joi.string().regex(passwordRegex).required()
-            })
-        },
     },
     refresh: {
         body: {

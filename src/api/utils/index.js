@@ -41,7 +41,7 @@ exports.respondSuccess = function (res, status = httpStatus.OK) {
 };
 
 //auth utils
-exports.extractToken = async function (req, options = config.security.jwt.accessToken) {
+exports.extractToken = async function (req, options = config.security.jwt.accessToken.extract) {
     const headerValue = req.headers[options.header.toLowerCase()];
     if(!headerValue) {
         return false;
@@ -52,15 +52,15 @@ exports.extractToken = async function (req, options = config.security.jwt.access
     return prefix && token && prefix === options.prefix && token;
 };
 
-exports.verifyToken = async function (token, options = config.security.jwt.accessToken) {
-    return jwt.verify(token, options.secret, options.algorithms);
+exports.verifyToken = async function (token, secret = config.security.jwt.accessToken.secret, options = config.security.jwt.accessToken.verify) {
+    return jwt.verify(token, secret, options);
 };
 
-exports.createJWT = async function (payload, options = config.security.jwt.accessToken) {
-    return jwt.sign(payload, options.secret, options.expiresIn);
+exports.createJWT = async function (payload, secret = config.security.jwt.accessToken.secret, options = config.security.jwt.accessToken.sign) {
+    return jwt.sign(payload, secret, options);
 };
 
-exports.setTokenHeader = function setToken(res, token, options = config.security.jwt.accessToken) {
+exports.setTokenHeader = function setToken(res, token, options = config.security.jwt.accessToken.extract) {
     return res.append(options.header, [options.prefix, token].join(' '));
 };
 

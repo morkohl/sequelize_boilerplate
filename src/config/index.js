@@ -25,11 +25,17 @@ module.exports = {
     security: {
         jwt: {
             accessToken: {
-                prefix: environment.SECURITY_JWT_PREFIX || 'Bearer',
-                header: environment.SECURITY_JWT_HEADER || 'X-Access-Token',
+                sign: {
+                    expiresIn: environment.SECURITY_JWT_ACCESS_TOKEN || '15m'
+                },
+                verify: {
+                    algorithms: environment.SECURITY_JWT_ALGORITHM ? [environment.SECURITY_JWT_ALGORITHM] : ['HS256'],
+                },
+                extract: {
+                    header: environment.SECURITY_JWT_HEADER || 'X-Access-Token',
+                    prefix: environment.SECURITY_JWT_PREFIX || 'Bearer'
+                },
                 secret: environment.SECURITY_JWT_SECRET || "localdevsecret",
-                algorithms: environment.SECURITY_JWT_ALGORITHM ? [environment.SECURITY_JWT_ALGORITHM] : ['HS256'],
-                expiresIn: environment.SECURITY_JWT_ACCESS_TOKEN || '15m'
             },
         },
         refreshToken: {
