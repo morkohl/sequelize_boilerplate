@@ -9,9 +9,9 @@ const {
     register
 } = require('../../validation/auth.validation');
 
-router.get('/refresh', validate(refresh), authController.refresh);
 router.get('/logout', authenticate(), authController.logout);
 
+router.post('/refresh', validate(refresh), authController.refresh);
 router.post('/login', validate(login), authController.login);
 router.post('/register', validate(register), authController.register);
 
