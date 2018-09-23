@@ -4,6 +4,7 @@ const httpStatus = require('http-status');
 const salt = 12;
 const APIError = require('./APIError');
 const config = require('../../config');
+const authConfig = config.security.jwt.accessToken
 const randToken = require('rand-token');
 
 exports.hashPassword = async function (user) {
@@ -41,7 +42,7 @@ exports.respondSuccess = function (res, status = httpStatus.OK) {
 };
 
 //auth utils
-exports.extractToken = async function (req, options = config.security.jwt.accessToken.extract) {
+exports.extractToken = async function (req, options = authConfig.extract) {
     const headerValue = req.headers[options.header.toLowerCase()];
     if(!headerValue) {
         return false;
@@ -52,15 +53,15 @@ exports.extractToken = async function (req, options = config.security.jwt.access
     return prefix && token && prefix === options.prefix && token;
 };
 
-exports.verifyToken = async function (token, secret = config.security.jwt.accessToken.secret, options = config.security.jwt.accessToken.verify) {
+exports.verifyToken = async function (token, secret = authConfig.secret, options = authConfig.verify) {
     return jwt.verify(token, secret, options);
 };
 
-exports.createJWT = async function (payload, secret = config.security.jwt.accessToken.secret, options = config.security.jwt.accessToken.sign) {
+exports.createJWT = async function (payload, secret = authConfig.secret, options = authConfig.sign) {
     return jwt.sign(payload, secret, options);
 };
 
-exports.setTokenHeader = function setToken(res, token, options = config.security.jwt.accessToken.extract) {
+exports.setTokenHeader = function setToken(res, token, options = authConfig.extract) {
     return res.append(options.header, [options.prefix, token].join(' '));
 };
 
