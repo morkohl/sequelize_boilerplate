@@ -15,7 +15,7 @@ exports.register = async function (req, res, next) {
         if (foundUser) {
             next(new APIError({
                 message: 'User already registered',
-                status: httpStatus.UNAUTHORIZED
+                status: httpStatus.UNPROCESSABLE_ENTITY
             }))
         }
 
@@ -42,12 +42,12 @@ exports.login = async function (req, res, next) {
 
         if (user) {
             const validPassword = await user.validPassword(req.body.user.password);
+
             if (validPassword) {
                 const tokens = await db.RefreshToken.createTokenPair(user);
-                res = utils.setTokenHeader(res, tokens.accessToken);
-                delete tokens.accessToken;
                 return utils.respondWithData(res, tokens, httpStatus.CREATED);
             }
+
             error.message = "Invalid password";
             return next(new APIError(error));
         }
@@ -60,8 +60,7 @@ exports.login = async function (req, res, next) {
 
 exports.logout = async function (req, res, next) {
     try {
-        const userId = req.accessToken.sub;
-        const user = await db.User.findById(userId);
+        const user = await db.User.findById(req.accessTokenPayload.sub);
         if (user) {
             await db.RefreshToken.update(
                 {
@@ -92,34 +91,31 @@ exports.refresh = async function (req, res, next) {
             }
         });
 
-        if (!(refreshToken && refreshToken.valid)) {
-            next(new APIError({
-                message: refreshToken.valid ? 'Unknown refresh token' : 'Invalid refresh token',
-                status: httpStatus.UNAUTHORIZED
-            }))
-        }
+        if (refreshToken) {
+            if(refreshToken.valid) {
+                const user = await db.User.findById(refreshToken.userId);
 
-        const user = await db.User.findById(refreshToken.userId);
+                if (!user) {
+                    next(new APIError({
+                        message: 'Unknown user',
+                        status: httpStatus.UNAUTHORIZED
+                    }))
+                }
 
-        if (!user) {
-            next(new APIError({
-                message: 'Unknown user',
-                status: httpStatus.UNAUTHORIZED
-            }))
-        }
+                const refreshedAccessToken = await refreshToken.refreshAccessToken({sub: user.id});
 
-        await db.RefreshToken.destroy({
-            where: {
-                token: req.body.refreshToken,
-                userId: user.id
+                return utils.respondWithData(res, { accessToken: refreshedAccessToken }, httpStatus.CREATED);
             }
-        });
 
-        const refreshedAccessToken = await refreshToken.refreshAccessToken({sub: user.id});
-
-        res = utils.setTokenHeader(res, refreshedAccessToken);
-
-        return utils.utils.respondSuccess(res, httpStatus.CREATED);
+            next(new APIError({
+                message: 'Invalid refresh token',
+                status: httpStatus.UNAUTHORIZED
+            }))
+        }
+        next(new APIError({
+            message: 'Unknown refresh token',
+            status: httpStatus.UNAUTHORIZED
+        }))
     } catch (err) {
         next(err);
     }
