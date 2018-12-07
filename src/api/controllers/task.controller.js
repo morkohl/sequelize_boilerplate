@@ -4,7 +4,12 @@ const { respondWithData, respondSuccess } = require('../utils');
 
 exports.create = async function (req, res, next) {
     try {
-        const task = await db.Task.create(req.body.task);
+
+
+        const task = await db.Task.create({
+            ...req.body.task,
+            userId: req.params.userId
+        });
         return respondWithData(res, task, httpStatus.CREATED);
     } catch (err) {
         next(err);
@@ -43,7 +48,7 @@ exports.getAll = async function (req, res, next) {
 
 exports.update = async function (req, res, next) {
     try {
-        const updatedRows = await db.Task.update(
+        await db.Task.update(
             req.body.task,
             {
                 where: {
@@ -52,7 +57,13 @@ exports.update = async function (req, res, next) {
                 }
             }
         );
-        return respondWithData(res, updatedRows)
+        const updatedTask = await db.Task.find({
+            where: {
+                userId: req.params.userId,
+                id: req.params.taskId
+            }
+        });
+        return respondWithData(res, updatedTask)
     } catch (err) {
         next(err);
     }
