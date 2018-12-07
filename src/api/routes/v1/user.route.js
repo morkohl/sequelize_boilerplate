@@ -5,13 +5,13 @@ const userController = require('../../controllers/user.controller');
 const authenticate = require('../../middleware/auth.middleware');
 
 const {
-    change,
+    update,
     userParams
 } = require('../../validation/user.validations');
 
 router.get('/', authenticate(), userController.getAll);
-router.get('/:userId', authenticate(), validate(userParams), userController.getUser);
+router.get('/:userId', authenticate(), validate(userParams), userController.get);
 
-router.put('/:userId', authenticate(), validate(change), userController.changeUser);
+router.put('/:userId', authenticate(), validate(update), userController.update);
 
 module.exports = router;

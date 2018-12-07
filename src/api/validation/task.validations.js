@@ -11,11 +11,11 @@ module.exports = {
             })
         },
         params: {
-            userId: Joi.number().required(),
-            taskId: Joi.number().required()
+            userId: Joi.number().positive().required(),
+            taskId: Joi.number().positive().required()
         }
     },
-    change: {
+    update: {
         body: {
             task: Joi.object({
                 taskName: Joi.string(),
@@ -26,19 +26,19 @@ module.exports = {
             })
         },
         params: {
-            userId: Joi.number().required(),
-            taskId: Joi.number().required()
+            userId: Joi.number().positive().required(),
+            taskId: Joi.number().positive().required()
         }
     },
     userAndTaskParams: {
         params: {
-            userId: Joi.number().required(),
-            taskId: Joi.number().required()
+            userId: Joi.number().positive().required(),
+            taskId: Joi.number().positive().required()
         }
     },
     userParams: {
         params: {
-            userId: Joi.number().required()
+            userId: Joi.number().positive().required()
         }
     }
 };

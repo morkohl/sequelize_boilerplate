@@ -1,20 +1,20 @@
 const Joi = require('joi');
 
 module.exports = {
-    change: {
+    update: {
         body: {
             user: Joi.object({
-                email: Joi.string().email().required(),
-                username: Joi.string().regex(/^[\w\-]+$/).required()
+                email: Joi.string().email(),
+                username: Joi.string().regex(/^[\w\-]+$/)
             }).required()
         },
         params: {
-            userId: Joi.number().required()
+            userId: Joi.number().positive().required()
         }
     },
     userParams: {
         params: {
-            userId: Joi.number().required()
+            userId: Joi.number().positive().required()
         }
     }
 };
