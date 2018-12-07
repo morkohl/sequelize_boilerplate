@@ -16,7 +16,7 @@ module.exports = function (sequelize, DataTypes) {
             validate: {
                 isBelowMax: function (value, next) {
                     if (value > this.maximumTaskPoints) {
-                        return next('Current task points need to be less than current task points.')
+                        return next('Current task points need to be less than maximum task points.')
                     }
                     next();
                 },
