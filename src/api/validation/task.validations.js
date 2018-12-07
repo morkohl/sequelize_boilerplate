@@ -12,7 +12,6 @@ module.exports = {
         },
         params: {
             userId: Joi.number().positive().required(),
-            taskId: Joi.number().positive().required()
         }
     },
     update: {
