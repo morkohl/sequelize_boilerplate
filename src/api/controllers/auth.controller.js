@@ -29,8 +29,9 @@ exports.register = async function (req, res, next) {
 
 exports.login = async function (req, res, next) {
     let error = {
-        status: httpStatus.UNAUTHORIZED
-    };
+        status: httpStatus.UNAUTHORIZED,
+        message: "Invalid password"
+};
 
     try {
         const user = await db.User.findOne(
@@ -47,11 +48,8 @@ exports.login = async function (req, res, next) {
                 const tokens = await db.RefreshToken.createTokenPair(user);
                 return utils.respondWithData(res, tokens, httpStatus.CREATED);
             }
-
-            error.message = "Invalid password";
-            return next(new APIError(error));
         }
-        error.message = "User doesn't exist";
+
         next(new APIError(error));
     } catch (err) {
         next(err);
