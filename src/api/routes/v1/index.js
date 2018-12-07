@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.use('/', indexRoute);
 router.use('/user', userRoutes);
-router.use('/task', taskRoutes);
+router.use('/user/:userId', taskRoutes);
 router.use('/auth', authRoutes);
 
 module.exports = router;

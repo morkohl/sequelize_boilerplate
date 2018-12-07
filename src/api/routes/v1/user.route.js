@@ -14,4 +14,6 @@ router.get('/:userId', authenticate(), validate(userParams), userController.get)
 
 router.put('/:userId', authenticate(), validate(update), userController.update);
 
+router.delete('/:userId', authenticate(), validate(userParams), userController.remove);
+
 module.exports = router;
