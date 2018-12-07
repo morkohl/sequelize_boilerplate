@@ -2,7 +2,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const httpStatus = require('http-status');
 const salt = 12;
-const APIError = require('./APIError');
 const config = require('../../config');
 const authConfig = config.security.jwt.accessToken
 const randToken = require('rand-token');
@@ -16,17 +15,13 @@ exports.respondWithData = function (res, data, status = httpStatus.OK) {
     const successResponse = {
         success: true,
         status: status,
-        timestamp: new Date().getTime()
+        timestamp: new Date().getTime(),
+        data: data
     };
 
     if (!data || data.length === 0) {
-        throw new APIError({
-            message: "Not found",
-            status: httpStatus.NOT_FOUND
-        })
+        return res.status(httpStatus.NO_CONTENT).send();
     }
-
-    successResponse.data = data;
 
     res.status(status).send(successResponse)
 };
@@ -37,6 +32,10 @@ exports.respondSuccess = function (res, status = httpStatus.OK) {
         status: status,
         timestamp: new Date().getTime()
     };
+
+    if(status === httpStatus.NO_CONTENT) {
+        return res.status(status).send();
+    }
 
     res.status(status).send(successResponse);
 };
