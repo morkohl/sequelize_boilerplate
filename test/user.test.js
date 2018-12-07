@@ -5,7 +5,8 @@ const httpStatus = require('http-status');
 const server = require('../src/server');
 const {
     authHeader,
-    authHeaderValue
+    authHeaderValue,
+    testUserData
 } = require('./util');
 
 
@@ -14,11 +15,7 @@ const expect = chai.expect;
 chai.use(chaiHttp);
 
 describe('user test', () => {
-    const userData = {
-        username: 'John-Doe_10',
-        email: 'john.doe10@mail-provider.com',
-        password: 'secretPassword12345#'
-    };
+    const userData = testUserData().user;
 
     let user;
     let authTokens;
@@ -46,11 +43,7 @@ describe('user test', () => {
     });
 
     describe('GET /user', () => {
-        const anotherUsersData = {
-            username: 'John-Doe_11',
-            email: 'john.doe11@mail-provider.com',
-            password: 'secretPassword12345#'
-        };
+        const anotherUsersData = testUserData().user;
 
         let anotherUser;
 
@@ -148,6 +141,16 @@ describe('user test', () => {
                     expect(res).to.have.status(httpStatus.BAD_REQUEST);
                 })
         });
-
     });
+
+    describe('POST /user/:id', () => {
+        it('should delete a user', () => {
+            return chai.request(server)
+                .delete(`/api/v1/user/${user.id}`)
+                .set(authHeader, authHeaderValue(authTokens.accessToken))
+                .then(res => {
+                    expect(res).to.have.status(httpStatus.NO_CONTENT);
+                })
+        })
+    })
 });
