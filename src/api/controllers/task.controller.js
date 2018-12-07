@@ -1,17 +1,17 @@
 const db = require('../models');
 const httpStatus = require('http-status');
-const respondWithData = require('../utils').respondWithData;
+const { respondWithData, respondSuccess } = require('../utils');
 
-exports.createTask = async function (req, res, next) {
+exports.create = async function (req, res, next) {
     try {
         const task = await db.Task.create(req.body.task);
-        return await respondWithData(res, task, httpStatus.CREATED);
+        return respondWithData(res, task, httpStatus.CREATED);
     } catch (err) {
         next(err);
     }
 };
 
-exports.getTask = async function (req, res, next) {
+exports.get = async function (req, res, next) {
     try {
         const task = await db.Task.findOne(
             {
@@ -20,13 +20,13 @@ exports.getTask = async function (req, res, next) {
                     userId: req.params.userId
                 }
             });
-        return await respondWithData(res, task)
+        return respondWithData(res, task)
     } catch (err) {
         next(err);
     }
 };
 
-exports.getAllTasks = async function (req, res, next) {
+exports.getAll = async function (req, res, next) {
     try {
         const tasks = await db.Task.findAll(
             {
@@ -35,13 +35,13 @@ exports.getAllTasks = async function (req, res, next) {
                 }
             }
         );
-        await respondWithData(res, tasks);
+        return respondWithData(res, tasks);
     } catch (err) {
         next(err);
     }
 };
 
-exports.changeTask = async function (req, res, next) {
+exports.update = async function (req, res, next) {
     try {
         const updatedRows = await db.Task.update(
             req.body.task,
@@ -52,8 +52,22 @@ exports.changeTask = async function (req, res, next) {
                 }
             }
         );
-        await respondWithData(res, updatedRows)
+        return respondWithData(res, updatedRows)
     } catch (err) {
+        next(err);
+    }
+};
+
+exports.remove = async function (req, res, next) {
+    try {
+        await db.Task.destroy({
+            where: {
+                userId: req.params.userId,
+                id: req.params.taskId
+            }
+        });
+        return respondSuccess(res, httpStatus.NO_CONTENT);
+    } catch(err) {
         next(err);
     }
 };

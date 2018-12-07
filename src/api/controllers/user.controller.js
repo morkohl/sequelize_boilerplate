@@ -1,10 +1,11 @@
 const db = require('../models');
-const respondWithData = require('../utils').respondWithData;
+const httpStatus = require('http-status');
+const {respondWithData, respondSuccess} = require('../utils');
 
-exports.getUser = async function (req, res, next) {
+exports.get = async function (req, res, next) {
     try {
         const user = await db.User.findById(req.params.userId);
-        respondWithData(res, user);
+        return respondWithData(res, user);
     } catch (err) {
         next(err);
     }
@@ -13,21 +14,36 @@ exports.getUser = async function (req, res, next) {
 exports.getAll = async function (req, res, next) {
     try {
         const users = await db.User.findAll();
-        respondWithData(res, users);
+        return respondWithData(res, users);
     } catch (err) {
         next(err);
     }
 };
 
-exports.changeUser = async function (req, res, next) {
+exports.update = async function (req, res, next) {
     try {
-        const updatedRows = await db.User.update(
+        await db.User.update(
+            req.body.user,
             {
                 where: {
                     id: req.params.userId
-                }
+                },
             });
-        respondWithData(res, updatedRows);
+        const updatedUser = await db.User.findById(req.params.userId);
+        return respondWithData(res, updatedUser);
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.remove = async function (req, res, next) {
+    try {
+        await db.User.destroy({
+            where: {
+                id: req.params.userId
+            }
+        });
+        return respondSuccess(res, httpStatus.NO_CONTENT);
     } catch (err) {
         next(err);
     }

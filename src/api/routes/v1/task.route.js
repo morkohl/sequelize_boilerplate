@@ -6,16 +6,16 @@ const authenticate = require('../../middleware/auth.middleware');
 
 const {
     create,
-    change,
+    update,
     userAndTaskParams,
     userParams
 } = require('../../validation/task.validations');
 
-router.post('/:userId/task', authenticate(), validate(create), taskController.createTask);
+router.post('/:userId/task', authenticate(), validate(create), taskController.create);
 
-router.get('/:userId/task/', authenticate(), validate(userParams), taskController.getAllTasks);
-router.get('/:userId/task/:taskId', authenticate(), validate(userAndTaskParams), taskController.getTask);
+router.get('/:userId/task/', authenticate(), validate(userParams), taskController.getAll);
+router.get('/:userId/task/:taskId', authenticate(), validate(userAndTaskParams), taskController.get);
 
-router.put('/:userId/task/:taskId', authenticate(), validate(change), taskController.changeTask);
+router.put('/:userId/task/:taskId', authenticate(), validate(update), taskController.update);
 
 module.exports = router;
