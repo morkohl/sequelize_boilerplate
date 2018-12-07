@@ -37,7 +37,7 @@ module.exports = function (schema, options) {
 const apiValidationError = function (joiErrors) {
     const errorArray = transformJoiErrors(joiErrors);
     return new APIError({
-        message: errorArray.reduce((acc, validationErr) => acc.message + '; ' + validationErr.message),
+        message: errorArray.map(item => item.message).join(';'),
         status: httpStatus.BAD_REQUEST,
         errors: errorArray
     })
@@ -48,7 +48,9 @@ const transformJoiErrors = function(joiErrors) {
         return joiError.details.map(errorDetail => {
             return {
                 name: joiError.name,
-                message: errorDetail.message
+                message: errorDetail.message,
+                field: errorDetail.context.key,
+                value: errorDetail.context.value
             }
         })
     }).reduce((acc, arr) => acc.concat(arr))
