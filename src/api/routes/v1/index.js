@@ -7,8 +7,8 @@ const authRoutes = require('./auth.route');
 const router = express.Router();
 
 router.use('/', indexRoute);
-router.use('/users', userRoutes);
-router.use('/tasks', taskRoutes);
+router.use('/user', userRoutes);
+router.use('/task', taskRoutes);
 router.use('/auth', authRoutes);
 
 module.exports = router;
