@@ -3,6 +3,8 @@ const httpStatus = require('http-status');
 const APIError = require('../utils/APIError');
 
 const handler = function (err, req, res, next) {
+    err = convertError(err);
+
     const errorResponse = {
         success: false,
         status: err.status,
@@ -14,7 +16,7 @@ const handler = function (err, req, res, next) {
         }
     };
 
-    if (process.env.NODE_ENV !== 'DEV') {
+    if (process.env.NODE_ENV === 'DEV' || process.env.NODE_ENV === 'TEST') {
         delete errorResponse.error.stack;
     }
 
@@ -26,7 +28,8 @@ const handler = function (err, req, res, next) {
     }
 };
 
-exports.converter = function (err, req, res, next) {
+const convertError = function (err) {
+
     let convertedError = err;
 
     if (!(err instanceof APIError)) {
@@ -37,20 +40,39 @@ exports.converter = function (err, req, res, next) {
         });
     }
 
+    if(err.status && err.status instanceof Number) {
+        convertedError.status = err.status;
+    }
+
+    if(err.stack.includes('Sequelize')) {
+        convertedError.status = httpStatus.UNPROCESSABLE_ENTITY;
+        delete convertedError.message
+    }
+
     if(err instanceof SyntaxError) {
         convertedError.status = httpStatus.BAD_REQUEST
     }
 
-    handler(convertedError, req, res)
+    return convertedError;
+};
+
+exports.logError = function (err, req, res, next) {
+    console.log('error occured;', {
+        name: err.name,
+        message: err.message,
+    });
+    next(err);
 };
 
 exports.notFound = function (req, res, next) {
-  let err = new APIError({
-      message: 'Not Found',
-      status: httpStatus.NOT_FOUND
-  });
+    let err = new APIError({
+        message: 'Not Found',
+        status: httpStatus.NOT_FOUND
+    });
 
-  handler(err, req, res);
+    handler(err, req, res, next);
 };
 
 exports.handler = handler;
+exports.convertError = convertError;
+
