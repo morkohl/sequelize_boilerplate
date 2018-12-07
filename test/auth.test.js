@@ -3,7 +3,10 @@ const chaiHttp = require('chai-http');
 const httpStatus = require('http-status');
 const db = require('../src/api/models');
 const server = require('../src/server');
-const tknConfig = require('../src/config').security.jwt.accessToken;
+const {
+    authHeader,
+    authHeaderValue
+} = require('./util');
 
 const expect = chai.expect;
 
@@ -12,7 +15,7 @@ chai.use(chaiHttp);
 describe('auth test', () => {
     const userData = {
         username: 'John-Doe_10',
-        email: 'john.doe@mail-provider.com',
+        email: 'john.doe10@mail-provider.com',
         password: 'secretPassword12345#'
     };
 
@@ -22,7 +25,7 @@ describe('auth test', () => {
         db.User.create(userData).then(createdUser => {
             user = createdUser;
             done();
-        });
+        }).catch(done);
     });
 
     afterEach(done => {
@@ -32,7 +35,7 @@ describe('auth test', () => {
                 if (models.indexOf(model) === models.length - 1) {
                     done();
                 }
-            })
+            }).catch(done)
         });
     });
 
@@ -112,7 +115,7 @@ describe('auth test', () => {
         });
     });
 
-    describe('/GET logout', () => {
+    describe('GET /logout', () => {
         let authTokens;
 
         beforeEach(done => {
@@ -120,13 +123,13 @@ describe('auth test', () => {
                 .then(tokens => {
                     authTokens = tokens;
                     done();
-                })
+                }).catch(done)
         });
 
         it('should log out a user ', () => {
             return chai.request(server)
                 .get('/api/v1/auth/logout')
-                .set(tknConfig.extract.header, [tknConfig.extract.prefix, authTokens.accessToken].join(' '))
+                .set(authHeader, authHeaderValue(authTokens.accessToken))
                 .then(res => {
                     expect(res).to.be.json;
                     expect(res).to.have.status(httpStatus.OK);
@@ -141,7 +144,7 @@ describe('auth test', () => {
         it('should not log out a user with a faulty access token', () => {
             return chai.request(server)
                 .get('/api/v1/auth/logout')
-                .set(tknConfig.extract.header, [tknConfig.extract.prefix, 'an.incorrect.accessToken'].join(' '))
+                .set(authHeader, authHeaderValue('an.incorrect.accesstoken'))
                 .then(res => {
                     expect(res).to.be.json;
                     expect(res).to.have.status(httpStatus.UNAUTHORIZED);
@@ -149,7 +152,7 @@ describe('auth test', () => {
         });
     });
 
-    describe('/GET refresh', () => {
+    describe('GET /refresh', () => {
         let refreshToken;
 
         beforeEach(done => {
@@ -157,7 +160,7 @@ describe('auth test', () => {
                 .then(tokens => {
                     refreshToken = tokens.refreshToken;
                     done()
-                })
+                }).catch(done)
         });
 
         it('should create a new access token from a valid refresh token', () => {
@@ -193,7 +196,8 @@ describe('auth test', () => {
                             userId: user.id
                         }
                     })
-                    .then(() => done());
+                    .then(() => done())
+                    .catch(done);
             });
 
             it('should not create a new access token if the refreshToken is invalid', () => {
