@@ -18,7 +18,7 @@ app.use(cors());
 app.use('/api/v1', routes);
 
 app.use(errorHandler.notFound);
-app.use(errorHandler.converter);
+app.use(errorHandler.logError);
 app.use(errorHandler.handler);
 
 module.exports = app;
